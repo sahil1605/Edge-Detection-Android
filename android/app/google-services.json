@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "1019951397287",
+    "project_id": "image-adder",
+    "storage_bucket": "image-adder.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1019951397287:android:1619866b310d97a1765e82",
+        "android_client_info": {
+          "package_name": "com.example.edge_detecter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1019951397287-lo5ti619viahlsdiv4iedtjmfjouv8c0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8SRMyh-8suZUROFeGaxlPneheohrL3tU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1019951397287-lo5ti619viahlsdiv4iedtjmfjouv8c0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1019951397287-pjpgmr363m22ijcli5esdaupjhad21l3.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.edgeDetecter"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
