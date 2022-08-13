@@ -30,11 +30,13 @@ class _imageListState extends State<imageList> {
 
     await Future.forEach<Reference>(allFiles, (file) async {
       final String fileUrl = await file.getDownloadURL();
+
       final FullMetadata fileMeta = await file.getMetadata();
       files.add({
         "url": fileUrl,
         "f1": double.parse(fileMeta.customMetadata?['f1'].toString() ?? "0"),
         "f2": double.parse(fileMeta.customMetadata?['f2'].toString() ?? "0"),
+        "fileName": fileMeta.customMetadata?['fileName'].toString() ?? "",
       });
     });
 
@@ -74,7 +76,8 @@ class _imageListState extends State<imageList> {
                           check: false,
                           url: '',
                           f1: 0,
-                          f2: 0)),
+                          f2: 0,
+                          fileName: '')),
                 );
                 // do something
               },
@@ -107,7 +110,8 @@ class _imageListState extends State<imageList> {
                                           check: true,
                                           url: image['url'],
                                           f1: image['f1'],
-                                          f2: image['f2'])),
+                                          f2: image['f2'],
+                                          fileName: image['fileName'])),
                                 );
                               },
                               child: SizedBox(

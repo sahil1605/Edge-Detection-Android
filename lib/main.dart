@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'dart:io';
 
 import 'package:path/path.dart';
@@ -28,7 +29,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +40,12 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: const MyHomePage(
-          title: 'Image Selector', check: false, url: '', f1: 0, f2: 0),
+          title: 'Image Selector',
+          check: false,
+          url: '',
+          f1: 0,
+          f2: 0,
+          fileName: ''),
       // ),
     );
   }
@@ -47,25 +53,27 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage(
-      {Key? key,
-      required this.title,
-      required this.url,
-      required bool this.check,
-      required this.f1,
-      required this.f2})
+      {Key key,
+      this.title,
+      this.url,
+      bool this.check,
+      this.f2,
+      this.f1,
+      this.fileName})
       : super(key: key);
   final String url;
   final bool check;
   final String title;
   final double f1;
   final double f2;
+  final String fileName;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  File? image;
+  File image;
 // widget.check ?image = Image.network(url):null;0
   final imagePicker = ImagePicker();
 
@@ -74,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
   double _value2 = 200;
   dynamic res;
   Image imageNew = Image.asset('assets/temp.png');
-  late File file;
+  File file;
   bool preloaded = false;
   bool loaded = false;
 
@@ -151,38 +159,55 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   String imageUrl = '';
-  uploadImage() async {
+  uploadImage({bool check = false, String fileName2 = 'sds'}) async {
     final firebaseStorage = FirebaseStorage.instance;
+    print(check);
+    print(fileName2);
 
-    var file = File(image!.path);
-
-    String fileName = file.path.split('/').last;
-    if (image != null) {
+    if (check) {
       final newMetadata = SettableMetadata(
-        cacheControl: "public,max-age=300",
-        contentType: "image/jpeg",
-        customMetadata: {'f1': _value1.toString(), 'f2': _value2.toString()},
+        customMetadata: {
+          'f1': _value1.toString(),
+          'f2': _value2.toString(),
+          'name': fileName2
+        },
       );
-      var snapshot = firebaseStorage
-          .ref()
-          .child('images/$fileName')
-          .putFile(file, newMetadata)
-          .snapshot;
-
-// Update metadata properties
       final metadata = await firebaseStorage
           .ref()
-          .child('images/$fileName')
+          .child('images/$fileName2')
           .updateMetadata(newMetadata);
-
-      var downloadUrl = await snapshot.ref.getDownloadURL();
-      setState(() {
-        imageUrl = downloadUrl;
-      });
     } else {
-      // ignore: avoid_print
-      print('No Image Path Received');
+      var file = File(image.path);
+
+      String fileName = file.path.split('/').last;
+
+      if (image != null) {
+        final newMetadata = SettableMetadata(
+          customMetadata: {
+            'f1': _value1.toString(),
+            'f2': _value2.toString(),
+            'name': fileName
+          },
+        );
+        var snapshot = firebaseStorage
+            .ref()
+            .child('images/$fileName')
+            .putFile(file, newMetadata)
+            .snapshot;
+        final metadata = await firebaseStorage
+            .ref()
+            .child('images/$fileName')
+            .updateMetadata(newMetadata);
+        var downloadUrl = await snapshot.ref.getDownloadURL();
+        setState(() {
+          imageUrl = downloadUrl;
+        });
+      } else {
+        // ignore: avoid_print
+        print('No Image Path Received');
+      }
     }
+// Update metadata properties
   }
 
   bool ticker = true;
@@ -255,7 +280,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold)),
                                     onPressed: () async {
-                                      uploadImage();
+                                      uploadImage(
+                                          check: widget.check,
+                                          fileName2: widget.fileName);
                                     },
                                   )
                                 : Container(),
@@ -298,7 +325,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: widget.check
                     ? Image.network(widget.url)
                     : image != null
-                        ? Image.file(image!)
+                        ? Image.file(image)
                         : const Text("No image Selected"),
               ),
               SizedBox(
